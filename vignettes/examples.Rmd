@@ -1,0 +1,46 @@
+---
+title: "examples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(clusterAnalysisUtils)
+cl1 <- system.file("extdata", "BIGSdb_038315_3800442768_50390.nogap.derep.uc", package="clusterAnalysisUtils")
+cl2 <- system.file("extdata", "BIGSdb_038315_3800442768_50390.nogap.derep.swarm.uc", package="clusterAnalysisUtils")
+
+cl1o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl1,format = "UC",remove_sizes = T)
+cl1o$df
+cl2o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl2,format = "UC",remove_sizes = T)
+new_clusters <- cl2o$seq_rep[cl2o$df$Cluster]
+length(unique(cl1o$df$Member))
+length(unique(cl1o$df$Cluster))
+length(unique(new_clusters))
+
+
+```
+
+
+```{r setup}
+library(dplyr)
+library(dtplyr)
+library(data.table)
+
+cl1d <- cl1o$df
+cl1d2 <- cl1d %>%
+  filter(grepl("Lithuania",Member)) %>%
+  as.data.frame() %>%
+  mutate(Custer2 = cl2o$seq_rep[Cluster] )
+
+fwrite(x=cl1d2,file="full_set_clustering.csv")
+```
