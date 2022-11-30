@@ -39,9 +39,13 @@ clusterDataParser <- R6Class("clustersclusterDataParser",
         private$.remove_sizes = remove_sizes
         if (format =="UC") {
           private$.parseUC()
-          private$.get_seq_rep()
         }
+        if (format =="MT") {
+          private$.parseMT()
+        }
+        private$.get_seq_rep()
       },
+      
       #' @description
       #' Returns a list of cluster menbers IDs given the  representative ID.
       #' @param repr_id (`character(1)`)\cr
@@ -102,8 +106,38 @@ clusterDataParser <- R6Class("clustersclusterDataParser",
               return(out)
             })) 
           }
+        },
+        
+        #' @description 
+        #' Parse Mothur format - as outputted by swarm with option '-r' 
+        .parseMT = function() {
+          dd <- fread(private$.fileName,header=F, sep = "\t") %>% 
+            select(-V1,-V2) %>%
+            as.data.frame()
+          dd <- unlist(dd[1,], use.names = F)
+          
+          clusters <- list()
+          members <- list()
+          ct = 0
+          for (d in dd) {
+            d2 = unlist(strsplit(d,split = ",",fixed=T)[[1]])
+            if (private$.remove_sizes){
+              d2 = unlist(lapply(d2,function(s) {
+                strsplit(s,split=";",fixed=T)[[1]][[1]]
+              }))
+            }
+            Cluster = d2[[1]]
+            for(Member in d2) {
+              ct = ct + 1
+              clusters[[ct]] <- Cluster
+              members[[ct]] <- Member
+            }
+          }
+          
+          df = data.table(Member = unlist(members),Cluster = unlist(clusters))
+          self$df <- df
+          
         }
-      
     )
 )
 

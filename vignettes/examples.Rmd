@@ -20,8 +20,8 @@ cl1 <- system.file("extdata", "BIGSdb_038315_3800442768_50390.nogap.derep.uc", p
 cl2 <- system.file("extdata", "BIGSdb_038315_3800442768_50390.nogap.derep.swarm.uc", package="clusterAnalysisUtils")
 
 cl1o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl1,format = "UC",remove_sizes = T)
-cl1o$df
 cl2o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl2,format = "UC",remove_sizes = T)
+
 new_clusters <- cl2o$seq_rep[cl2o$df$Cluster]
 length(unique(cl1o$df$Member))
 length(unique(cl1o$df$Cluster))
@@ -35,12 +35,26 @@ length(unique(new_clusters))
 library(dplyr)
 library(dtplyr)
 library(data.table)
+library(testthat)
+
 
 cl1d <- cl1o$df
 cl1d2 <- cl1d %>%
   filter(grepl("Lithuania",Member)) %>%
   as.data.frame() %>%
   mutate(Custer2 = cl2o$seq_rep[Cluster] )
+```
 
-fwrite(x=cl1d2,file="full_set_clustering.csv")
+
+```{r setup}
+#tt <- "./set4test/set1.derep.swarm.out"
+cl3 <- system.file("extdata", "set1.derep.swarm.out", package="clusterAnalysisUtils")
+cl3o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl3,format = "MT",remove_sizes = T)
+
+cl4 <- system.file("extdata", "set1.derep.swarm.uc", package="clusterAnalysisUtils")
+cl4o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl4,format = "UC",remove_sizes = T)
+
+cl3o$df
+cl4o$df
+
 ```

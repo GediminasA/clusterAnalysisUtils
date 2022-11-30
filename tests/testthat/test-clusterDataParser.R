@@ -17,4 +17,41 @@ test_that("Parsing of cluster representatives", {
   expect_equal(Reduce("&",got_clusters==expected_clusters),T)
 })
 
+test_that("Parsing Mothur and generation of correct 'Member' column", {
+  cl3 <- system.file("extdata", "set1.derep.swarm.out", package="clusterAnalysisUtils")
+  cl3o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl3,format = "MT",remove_sizes = T)
+  
+  cl4 <- system.file("extdata", "set1.derep.swarm.uc", package="clusterAnalysisUtils")
+  cl4o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl4,format = "UC",remove_sizes = T)
+  
+  expect_equal(sort(cl3o$df$Member),sort(cl4o$df$Member))
+})
+
+test_that("Parsing Mothur and generation of correct 'Cluster' column", {
+  cl3 <- system.file("extdata", "set1.derep.swarm.out", package="clusterAnalysisUtils")
+  cl3o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl3,format = "MT",remove_sizes = T)
+  
+  cl4 <- system.file("extdata", "set1.derep.swarm.uc", package="clusterAnalysisUtils")
+  cl4o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl4,format = "UC",remove_sizes = T)
+  
+  expect_equal(sort(cl3o$df$Cluster),sort(cl4o$df$Cluster))
+})
+
+test_that("Parsing Mothur and generation of correct dataframe", {
+  library(dplyr)
+  cl3 <- system.file("extdata", "set1.derep.swarm.out", package="clusterAnalysisUtils")
+  cl3o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl3,format = "MT",remove_sizes = T)
+  
+  cl4 <- system.file("extdata", "set1.derep.swarm.uc", package="clusterAnalysisUtils")
+  cl4o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl4,format = "UC",remove_sizes = T)
+  df1 <- cl3o$df %>%
+    arrange(-Member) %>%
+    as.data.frame()
+  df2 <- cl4o$df %>%
+    arrange(-Member) %>%
+    as.data.frame()
+    
+  
+  expect_equal(df1,df2)
+})
 
