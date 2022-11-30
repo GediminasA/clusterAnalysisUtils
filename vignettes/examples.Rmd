@@ -21,26 +21,30 @@ library(dplyr)
 
 
 
-```{r show clustering parsing}
+```{r show clustering parsing and mergging with upper level cluster}
 cl1 <- system.file("extdata", "BIGSdb_038315_3800442768_50390.nogap.derep.uc", package="clusterAnalysisUtils")
 cl2 <- system.file("extdata", "BIGSdb_038315_3800442768_50390.nogap.derep.swarm.uc", package="clusterAnalysisUtils")
 
 cl1o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl1,format = "UC",remove_sizes = T)
 cl2o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl2,format = "UC",remove_sizes = T)
-
-new_clusters <- cl2o$seq_rep[cl2o$df$Cluster]
+new_clusters <- cl2o$seq_rep[cl1o$df$Cluster]
 length(unique(cl1o$df$Member))
 length(unique(cl1o$df$Cluster))
 length(unique(new_clusters))
+cl1o$add_upper_lever_clusters(cl2o)
+length(unique(cl1o$df$Cluster))
+
 ```
 
 
 ```{r show joining two subsequent clustering}
-cl1d <- cl1o$df
-cl1d2 <- cl1d %>%
-  filter(grepl("Lithuania",Member)) %>%
-  as.data.frame() %>%
-  mutate(Custer2 = cl2o$seq_rep[Cluster] )
+new_clusters <- cl2o$seq_rep[cl1o$df$Cluster]
+length(unique(cl1o$df$Member))
+length(unique(cl1o$df$Cluster))
+length(unique(new_clusters))
+cl1o$add_upper_lever_clusters(cl2o)
+length(unique(cl1o$df$Cluster))
+
 ```
 
 

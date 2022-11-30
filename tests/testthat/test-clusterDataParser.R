@@ -55,3 +55,12 @@ test_that("Parsing Mothur and generation of correct dataframe", {
   expect_equal(df1,df2)
 })
 
+test_that("Merging with upper level clustering",{
+  cl1 <- system.file("extdata", "set1.derep.uc", package="clusterAnalysisUtils")
+  cl2 <- system.file("extdata", "set1.derep.swarm.out", package="clusterAnalysisUtils")
+  cl1o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl1,format = "UC",remove_sizes = T)
+  cl2o <- clusterAnalysisUtils::clusterDataParser$new(fileName = cl2,format = "MT",remove_sizes = T)
+  new_clusters <- cl2o$seq_rep[cl1o$df$Cluster]
+  cl1o$add_upper_lever_clusters(cl2o)
+  expect_equal(length(unique(cl1o$df$Cluster)),length(unique(new_clusters)))
+})

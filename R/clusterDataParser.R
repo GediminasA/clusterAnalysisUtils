@@ -56,6 +56,20 @@ clusterDataParser <- R6Class("clustersclusterDataParser",
               filter(Cluster == repr_id) %>%
               as.data.table()
           return(unlist(out$Member))
+      },
+      
+      #' @description
+      #' Joins with upper level clustering - ex dereplication followed by swarm
+      #'  - gets initial members assignment to the second clustering clusters
+      #' @param repr_id (`clustersclusterDataParser(1)`)\cr
+      #'   A ccluster representative sequence id
+      add_upper_lever_clusters = function(upperC){
+          self$df$Cluster <- upperC$seq_rep[self$df$Cluster]
+          self$df <- self$df %>%
+            lazy_dt() %>%
+            filter(!is.na(Cluster)) %>%
+            as.data.table()
+          private$.get_seq_rep() 
       }
     ),
     
